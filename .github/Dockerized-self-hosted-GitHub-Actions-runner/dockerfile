@@ -1,0 +1,51 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    jq \
+    unzip \
+    sudo \
+    docker.io \
+    ca-certificates \
+    lsb-release \
+    gnupg \
+    software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Terraform (works for both Terraform/OpenTofu users)
+RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+    > /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && apt-get install -y terraform
+
+# Install Node.js (LTS v18)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+# Create non-root user
+RUN useradd -m -s /bin/bash runner && \
+    usermod -aG docker runner && \
+    echo "runner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+WORKDIR /home/runner
+
+# Download GitHub runner
+RUN curl -s https://api.github.com/repos/actions/runner/releases/latest \
+  | jq -r '.assets[] | select(.name | test("linux-x64")) | .browser_download_url' \
+  | xargs curl -LO && \
+  tar xzf actions-runner-linux-x64-*.tar.gz && \
+  rm actions-runner-linux-x64-*.tar.gz
+
+# Fix permissions
+RUN mkdir -p /home/runner/_work && chown -R runner:runner /home/runner
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && chown runner:runner /entrypoint.sh
+
+USER runner
+ENTRYPOINT ["/entrypoint.sh"]
+
