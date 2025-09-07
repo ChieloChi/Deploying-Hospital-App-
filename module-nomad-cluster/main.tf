@@ -1,7 +1,3 @@
-provider "aws" {
-  region = var.aws_region
-}
-
 resource "aws_key_pair" "nomad_key" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
@@ -39,5 +35,7 @@ resource "aws_instance" "nomad_server" {
 
   tags = {
     Name = "Nomad-Server-${count.index}"
+    Environment = var.environment
   }
 }
+
