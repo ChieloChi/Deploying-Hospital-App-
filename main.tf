@@ -7,8 +7,8 @@ module "vpc-deployment" {
   create_elastic_ip  = var.create_elastic_ip
 }
 
-module "nomad-deployment" {
-  source             = "./module-nomad"
+module "nomad-cluster" {
+  source             = "./module-cluster"
   environment        = var.environment
   ami_id             = var.nomad_ami_id
   instance_type      = var.nomad_instance_type
