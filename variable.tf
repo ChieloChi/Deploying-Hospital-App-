@@ -139,4 +139,17 @@ variable "consul_instance_type" {
   description = "Instance type for Consul EC2"
   type        = string
 }
+variable "nomad_address" {
+  description = "URL of the root of the target Nomad agent"
+  type        = string
+}
+variable "private_subnet_db_ids" {
+  description = "List of private subnet IDs for RDS"
+  type        = list(string)
+}
+
+variable "aws_security_group_ids" {
+  description = "List of security group IDs for RDS"
+  type        = list(string)
+}
 

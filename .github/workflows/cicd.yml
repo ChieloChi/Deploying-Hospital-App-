@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      ENVIRONMENT: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -39,21 +40,24 @@ jobs:
         with:
           tofu_version: latest
 
+      - name: Generate dev.tfvars
+        run: |
+          mkdir -p tfvars
+          echo 'environment = "dev"' > tfvars/dev.tfvars
+          echo 'aws_region = "${{ secrets.AWS_REGION }}"' >> tfvars/dev.tfvars
+          echo 'key_name = "${{ secrets.KEY_NAME }}"' >> tfvars/dev.tfvars
+          echo 'public_key_path = "${{ secrets.PUBLIC_KEY_PATH }}"' >> tfvars/dev.tfvars
+          echo 'db_password = "${{ secrets.DB_PASSWORD }}"' >> tfvars/dev.tfvars
+          # Add other secrets or values as needed
+
       - name: OpenTofu Init
         run: tofu init
 
       - name: OpenTofu Plan
-        run: tofu plan
+        run: tofu plan -var-file="tfvars/dev.tfvars"
 
       - name: Deploy with OpenTofu
-        run: "tofu apply -var-file='tfvars/${{ env.ENVIRONMENT }}.tfvars' -auto-approve"
-
-
-
-
-      # Uncomment for auto-apply
-      #- name: OpenTofu Apply
-      #  run: tofu apply -auto-approve
+        run: tofu apply -var-file="tfvars/dev.tfvars" -auto-approve
 
   # ------------------------------
   # Build & Push Docker image to ECR

@@ -1,7 +1,8 @@
 resource "aws_key_pair" "nomad_key" {
-  key_name   = var.key_name
+  key_name   = "${var.environment}-nomad-key"
   public_key = file(var.public_key_path)
 }
+
 
 resource "aws_security_group" "nomad_sg" {
   name        = "nomad-sg"

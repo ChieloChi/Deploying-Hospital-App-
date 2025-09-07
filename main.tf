@@ -33,6 +33,10 @@ module "vault" {
   kms_key_arn    = var.kms_key_arn
 }
 
+provider "nomad" {
+  address = var.nomad_address
+}
+
 
 
 module "nomad-client-asg" {
