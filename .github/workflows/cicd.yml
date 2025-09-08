@@ -42,8 +42,10 @@ jobs:
 
       - name: Generate dev.tfvars
         run: |
-          mkdir -p tfvars
-          cat <<EOF > tfvars/dev.tfvars
+          mkdir -p environment
+          cat <<EOF > environment/dev.tfvars
+          - name: Generate dev.tfvars
+
           environment           = "${ENVIRONMENT}"
           aws_region            = "${AWS_REGION}"
           vpc_cidrblock         = "10.0.0.0/16"
@@ -76,7 +78,7 @@ jobs:
         run: tofu init
 
       - name: OpenTofu Plan
-        run: tofu plan -var-file="tfvars/dev.tfvars"
+        run: tofu plan -var-file="environment/dev.tfvars"
 
       - name: Deploy with OpenTofu
-        run: tofu apply -var-file="tfvars/dev.tfvars" -auto-approve
+        run: tofu apply -var-file="environment/dev.tfvars" -auto-approve
