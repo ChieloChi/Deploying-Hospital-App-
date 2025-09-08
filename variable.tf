@@ -83,15 +83,17 @@ variable "nomad_client_min_size" {
   type        = number
 }
 
-# 🔐 KMS (Optional)
+# 🔐 KMS (Optional — created if not provided)
 variable "kms_key_id" {
-  description = "KMS Key ID for encryption"
+  description = "KMS Key ID for encryption (optional, if not provided a new KMS key will be created)"
   type        = string
+  default     = null
 }
 
 variable "kms_key_arn" {
-  description = "KMS Key ARN for encryption"
+  description = "KMS Key ARN for encryption (optional, if not provided a new KMS key will be created)"
   type        = string
+  default     = null
 }
 
 # 🗄️ RDS Module
@@ -130,6 +132,7 @@ variable "vault_instance_type" {
   description = "Instance type for Vault EC2"
   type        = string
 }
+
 variable "consul_ami_id" {
   description = "AMI ID for Consul EC2 instance"
   type        = string
@@ -139,17 +142,23 @@ variable "consul_instance_type" {
   description = "Instance type for Consul EC2"
   type        = string
 }
+
 variable "nomad_address" {
   description = "URL of the root of the target Nomad agent"
   type        = string
 }
+
+# Optional networking inputs
 variable "private_subnet_db_ids" {
-  description = "List of private subnet IDs for RDS"
+  description = "List of private subnet IDs for RDS (optional, will be created if not provided)"
   type        = list(string)
+  default     = []
 }
 
 variable "aws_security_group_ids" {
-  description = "List of security group IDs for RDS"
+  description = "List of security group IDs for RDS (optional, will be created if not provided)"
   type        = list(string)
+  default     = []
 }
+
 
