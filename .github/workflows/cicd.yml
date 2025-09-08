@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -44,8 +45,6 @@ jobs:
         run: |
           mkdir -p environment
           cat <<EOF > environment/dev.tfvars
-          - name: Generate dev.tfvars
-
           environment           = "${ENVIRONMENT}"
           aws_region            = "${AWS_REGION}"
           vpc_cidrblock         = "10.0.0.0/16"
