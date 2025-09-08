@@ -73,18 +73,11 @@ jobs:
           consul_instance_type  = "t3.micro"
           EOF
 
-      - name: Debug AWS & OpenTofu
-        run: |
-          aws sts get-caller-identity
-          tofu --version
-          tofu validate
-
       - name: OpenTofu Init
-        run: tofu init -input=false -no-color
+        run: tofu init
 
       - name: OpenTofu Plan
         run: tofu plan -var-file="environment/dev.tfvars" -input=false -no-color
 
       - name: Deploy with OpenTofu
         run: tofu apply -var-file="environment/dev.tfvars" -auto-approve -input=false -no-color
-
